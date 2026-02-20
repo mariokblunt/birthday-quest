@@ -11,6 +11,14 @@ let gameState = {
     gifts: []
 };
 
+// FIX: unique pokemon order + click lock
+const favoritesPool = ['lucario', 'snorlax', 'umbreon', 'suicune', 'gyarados'];
+let shuffledFavorites = [...favoritesPool].sort(() => Math.random() - 0.5);
+
+let catchCount = 0;
+let catchingFinished = false;
+
+
 // ===========================================
 // START THE GAME
 // ===========================================
@@ -58,7 +66,6 @@ function chooseStarter(pokemon) {
     document.getElementById('message').innerHTML = message;
     document.getElementById('characterSprite').src = `sprites/${pokemon}.png`;
     
-    // Only show "Catch Pokémon" button - NO spoilers!
     document.getElementById('choicesArea').innerHTML = `
         <button class="choice-btn" onclick="catchPokemon()">Catch Pokémon!</button>
     `;
@@ -68,16 +75,15 @@ function chooseStarter(pokemon) {
 // CATCH HER FAVORITE POKÉMON!
 // ===========================================
 
-let catchCount = 0;
-
 function catchPokemon() {
-    const favorites = ['lucario', 'snorlax', 'umbreon', 'suicune', 'gyarados'];
-    const randomPokemon = favorites[Math.floor(Math.random() * favorites.length)];
+
+    if (catchingFinished) return; // FIX: prevent double execution
+
+    const randomPokemon = shuffledFavorites[catchCount]; // FIX: unique selection
     
     gameState.pokemonCaught.push(randomPokemon);
     catchCount++;
     
-    // Pokémon messages
     let message = "";
     
     if (randomPokemon === 'lucario') {
@@ -99,18 +105,18 @@ function catchPokemon() {
     document.getElementById('message').innerHTML = message;
     document.getElementById('characterSprite').src = `sprites/${randomPokemon}.png`;
     
-    // Check if we should continue catching or move to surprise
     if (catchCount < 5) {
-        // Keep catching - still no spoilers!
+        
         document.getElementById('choicesArea').innerHTML = `
             <button class="choice-btn" onclick="catchPokemon()">Catch another! (${catchCount}/5)</button>
         `;
+        
     } else {
-        // After 5 catches, AUTOMATIC surprise encounter!
+
+        catchingFinished = true; // FIX: lock further catches
+        
         document.getElementById('message').innerHTML = "After catching all those Pokémon, you feel a mysterious presence...";
         document.getElementById('characterSprite').src = "sprites/trainer.png";
-        
-        // Clear buttons and auto-start surprise after 2 seconds
         document.getElementById('choicesArea').innerHTML = ``;
         
         setTimeout(function() {
@@ -121,7 +127,6 @@ function catchPokemon() {
 
 // ===========================================
 // MYSTERIOUS ENCOUNTER - SURPRISE!
-// (No buttons - automatic)
 // ===========================================
 
 function mysteriousEncounter1() {
@@ -246,7 +251,6 @@ function finalCelebration() {
     document.getElementById('message').innerHTML = `🎉 HAPPY BIRTHDAY UJALA! 🎉<br><br>${specialMessage}`;
     document.getElementById('characterSprite').src = "sprites/trainer.png";
     
-    // Show all Pokémon and gifts
     document.getElementById('choicesArea').innerHTML = `
         <div style="background: #306850; padding: 20px; border-radius: 15px; color: white; text-align: center;">
             <p style="margin-bottom: 15px; font-size: 18px;">✨ Your Birthday Summary ✨</p>
@@ -261,10 +265,9 @@ function finalCelebration() {
 }
 
 // ===========================================
-// EASTER EGGS (SECRETS!)
+// EASTER EGGS (unchanged)
 // ===========================================
 
-// Secret 1: Tap character 5 times
 let tapCount = 0;
 document.getElementById('characterSprite').addEventListener('click', function() {
     tapCount++;
@@ -276,7 +279,6 @@ document.getElementById('characterSprite').addEventListener('click', function() 
     setTimeout(() => { tapCount = 0; }, 3000);
 });
 
-// Secret 2: Long press for Rare Candy
 let pressTimer;
 document.getElementById('textBox').addEventListener('touchstart', function(e) {
     pressTimer = setTimeout(function() {
@@ -289,7 +291,6 @@ document.getElementById('textBox').addEventListener('touchend', function() {
     clearTimeout(pressTimer);
 });
 
-// Secret 3: Type "UJALA" with keyboard
 let keySequence = [];
 document.addEventListener('keydown', function(e) {
     keySequence.push(e.key.toUpperCase());
