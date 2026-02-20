@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Birthday Quest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Top: Character Sprite -->
+        <div class="sprite-area">
+            <img id="characterSprite" src="sprites/trainer.png" alt="character">
+        </div>
+        
+        <!-- Middle: Text Box (Pokémon style) -->
+        <div class="text-box" id="textBox">
+            <p id="message">Happy Birthday! Ready for your adventure?</p>
+            <span id="nextArrow">▼</span>
+        </div>
+        
+        <!-- Bottom: Choices/Buttons -->
+        <div class="choices-area" id="choicesArea">
+            <button class="choice-btn" onclick="startGame()">Start Adventure!</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
